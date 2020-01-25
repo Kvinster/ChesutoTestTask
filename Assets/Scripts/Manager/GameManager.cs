@@ -111,21 +111,15 @@ namespace Chesuto.Manager {
             }
             switch ( _curState ) {
                 case State.Idle: {
-                    if ( _selectedCell != null ) {
-                        Debug.LogErrorFormat("Can't select cell {0}: cell {1} is already selected", coords,
-                            _selectedCell.Coords);
-                        break;
-                    }
-                    if ( !cell.IsEmpty && (cell.CurFigure.Color == Game.CurPlayer.Color) ) {
-                        _selectedCell = cell;
-                        _curState     = State.CellSelected;
-                        EventManager.Fire(new CellSelected(coords));
-                    }
+                    TrySelectCell(cell);
                     break;
                 }
                 case State.CellSelected: {
                     if ( (_selectedCell == cell) || Game.TryMove(_selectedCell.Coords, coords) ) {
                         TryDeselectCell();
+                    } else {
+                        TryDeselectCell();
+                        TrySelectCell(cell);
                     }
                     break;
                 }
@@ -154,6 +148,19 @@ namespace Chesuto.Manager {
                     Debug.LogErrorFormat("Unsupported state '{0}'", _curState.ToString());
                     break;
                 }
+            }
+        }
+
+        void TrySelectCell(Cell cell) {
+            if ( _selectedCell != null ) {
+                Debug.LogErrorFormat("Can't select cell {0}: cell {1} is already selected", _selectedCell.Coords,
+                    _selectedCell.Coords);
+                return;
+            }
+            if ( !cell.IsEmpty && (cell.CurFigure.Color == Game.CurPlayer.Color) ) {
+                _selectedCell = cell;
+                _curState     = State.CellSelected;
+                EventManager.Fire(new CellSelected(cell.Coords));
             }
         }
 
