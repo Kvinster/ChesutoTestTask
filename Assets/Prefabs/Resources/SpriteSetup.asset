@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae8d658f2e514cc89ae69ab1a8c8e142, type: 3}
+  m_Name: SpriteSetup
+  m_EditorClassIdentifier: 
+  WhiteCellBackground: {fileID: 21300000, guid: a1b886bc2d458ba48b80b66e54707189,
+    type: 3}
+  BlackCellBackground: {fileID: 21300000, guid: 3c5077c22f21d0e4cac208ce2b7cf05a,
+    type: 3}
+  FigureSprites:
+  - Name: Pawn
+    FigureType: 0
+    WhiteBoardSprite: {fileID: 21300000, guid: 46c0ae9345c7ba848ad56e97eb8cce16, type: 3}
+    BlackBoardSprite: {fileID: 21300000, guid: 6e4ffe6a4b1bb0042a832dff0ae43fa0, type: 3}
+  - Name: Rook
+    FigureType: 1
+    WhiteBoardSprite: {fileID: 21300000, guid: e51b5dd889e56a84ba478eab92820d24, type: 3}
+    BlackBoardSprite: {fileID: 21300000, guid: 38d5276a4bd8e8d43ba2554d687fad07, type: 3}
+  - Name: Knight
+    FigureType: 2
+    WhiteBoardSprite: {fileID: 21300000, guid: bc530949a68a9a34b86fcb73521c6fed, type: 3}
+    BlackBoardSprite: {fileID: 21300000, guid: e9b286ce83c9ac64eacb574f0cf69bbc, type: 3}
+  - Name: Bishop
+    FigureType: 3
+    WhiteBoardSprite: {fileID: 21300000, guid: 72feeaa51b6d63941af7b9ffcfba02cb, type: 3}
+    BlackBoardSprite: {fileID: 21300000, guid: 3c3468c11a3fe0e42b4ee0c864dc0d4a, type: 3}
+  - Name: Queen
+    FigureType: 4
+    WhiteBoardSprite: {fileID: 21300000, guid: 87fdb284eefaa6145be084a9d70742e3, type: 3}
+    BlackBoardSprite: {fileID: 21300000, guid: 217e6af48a5cc3a419d7399d59f11b0e, type: 3}
+  - Name: King
+    FigureType: 5
+    WhiteBoardSprite: {fileID: 21300000, guid: c321e69f677bf0447b4e3f6ee826ea0e, type: 3}
+    BlackBoardSprite: {fileID: 21300000, guid: 2de36f1788918db4d828737acffe191d, type: 3}
