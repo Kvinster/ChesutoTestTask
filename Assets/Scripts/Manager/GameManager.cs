@@ -41,6 +41,7 @@ namespace Chesuto.Manager {
             
             CurState = State.Idle;
             EventManager.Subscribe<GameEnded>(OnGameEnded);
+            EventManager.Subscribe<PawnReadyToPromote>(OnPawnReadyToPromote);
         }
 
         public void StartGame(DeckPreset deckPreset) {
@@ -49,6 +50,8 @@ namespace Chesuto.Manager {
 
         public void Deinit() {
             EventManager.Unsubscribe<GameEnded>(OnGameEnded);
+            EventManager.Unsubscribe<PawnReadyToPromote>(OnPawnReadyToPromote);
+            EventManager.Unsubscribe<PawnPromoted>(OnPawnPromoted);
 
             Game.Deinit();
         }
@@ -212,6 +215,28 @@ namespace Chesuto.Manager {
 
         void OnGameEnded(GameEnded ev) {
             TryDeselectCell();
+        }
+
+        void OnPawnReadyToPromote(PawnReadyToPromote ev) {
+            if ( !(Game.CurPlayer is HumanPlayer)) {
+                return;
+            }
+            if ( CurState != State.Idle ) {
+                TryDeselectCell();
+            }
+            Game.Pause(this);
+            CurState = State.PromotingPawn;
+            EventManager.Subscribe<PawnPromoted>(OnPawnPromoted);
+        }
+
+        void OnPawnPromoted(PawnPromoted ev) {
+            if ( !(Game.CurPlayer is HumanPlayer)) {
+                return;
+            }
+            Game.Unpause(this);
+            Game.TryEndTurn();
+            CurState = State.Idle;
+            EventManager.Unsubscribe<PawnPromoted>(OnPawnPromoted);
         }
     }
 }

@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using Chesuto.Chess;
 using Chesuto.Chess.Figures;
 using Chesuto.Events;
+using Chesuto.Manager;
 using Chesuto.Starter;
 
 namespace Chesuto.View.UI {
@@ -15,7 +16,8 @@ namespace Chesuto.View.UI {
         public Button RookButton;
         public Button QueenButton;
 
-        Board _board;
+        GameManager _gameManager;
+        Board       _board;
 
         Pawn _pawn;
 
@@ -24,7 +26,8 @@ namespace Chesuto.View.UI {
         }
 
         public override void Init(GameStarter gameStarter) {
-            _board = gameStarter.GameManager.Board;
+            _gameManager = gameStarter.GameManager;
+            _board       = _gameManager.Board;
 
             KnightButton.onClick.AddListener(() => OnFigureButtonClick(FigureType.Knight));
             BishopButton.onClick.AddListener(() => OnFigureButtonClick(FigureType.Bishop));
@@ -52,8 +55,10 @@ namespace Chesuto.View.UI {
         }
 
         void OnPawnReadyToPromote(PawnReadyToPromote ev) {
-            _pawn = ev.Pawn;
-            Show();
+            if ( _gameManager.Game.CurPlayer is HumanPlayer ) {
+                _pawn = ev.Pawn;
+                Show();
+            }
         }
     }
 }

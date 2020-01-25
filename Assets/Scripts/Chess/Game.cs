@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 
+using System.Collections.Generic;
+
 using Chesuto.Cards;
 using Chesuto.Events;
 
@@ -11,6 +13,8 @@ namespace Chesuto.Chess {
         GenericPlayer _blackPlayer;
 
         int _actionsLeft;
+
+        readonly List<object> _pausedBy = new List<object>();
         
         public GenericPlayer CurPlayer { get; private set; }
 
@@ -28,6 +32,8 @@ namespace Chesuto.Chess {
         }
         
         public bool HasActions => (ActionsLeft > 0);
+        
+        bool IsPaused => (_pausedBy.Count > 0);
 
         public Game() {
             Board = new Board();
@@ -86,7 +92,7 @@ namespace Chesuto.Chess {
         }
 
         public bool CanEndTurn() {
-            return !HasActions && CurPlayer.CanEndTurn();
+            return !HasActions && !IsPaused && CurPlayer.CanEndTurn();
         }
 
         public bool TryEndTurn(bool useAction = false) {
@@ -117,6 +123,14 @@ namespace Chesuto.Chess {
 
         public void Surrender(GenericPlayer player) {
             End(player.Color.Opposite());
+        }
+
+        public void Pause(object initiator) {
+            _pausedBy.Add(initiator);
+        }
+
+        public void Unpause(object obj) {
+            _pausedBy.Remove(obj);
         }
 
         public void AddActions(int addActions) {

@@ -157,6 +157,7 @@ namespace Chesuto.Chess {
                 passantPawn.JustMovedTwoSquares = false;
                 _passantPawns[passantIndex] = null;
             }
+            Pawn promotePawn = null;
             if ( (figure.Type == FigureType.Pawn) && (figure is Pawn pawn) ) {
                 if ( Mathf.Abs(end.Y - start.Y) == 2 ) {
                     pawn.JustMovedTwoSquares = true;
@@ -175,10 +176,13 @@ namespace Chesuto.Chess {
                 }
                 var endY = (pawn.Color == ChessColor.White) ? 7 : 0;
                 if ( end.Y == endY ) {
-                    EventManager.Fire(new PawnReadyToPromote(pawn));
+                    promotePawn = pawn;
                 }
             }
             EventManager.Fire(new ChessFigureMoved(start, end));
+            if ( promotePawn != null ) {
+                EventManager.Fire(new PawnReadyToPromote(promotePawn));
+            }
             return true;
         }
 
