@@ -1,16 +1,12 @@
-﻿using System;
-
-using Chesuto.Cards;
-using Chesuto.Chess;
-using Chesuto.Events;
-using Chesuto.Manager;
-
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 
+using Chesuto.Chess;
+using Chesuto.Events;
+using Chesuto.Manager;
 using Chesuto.Starter;
 
 namespace Chesuto.View {
@@ -23,21 +19,23 @@ namespace Chesuto.View {
         FigureViewPool _figureViewPool;
 
         void OnDestroy() {
+            if ( _gameManager != null ) {
+                _gameManager.StateChangedEvent -= OnStateChanged;
+            }
+            
             EventManager.Unsubscribe<GameStarted>(OnGameStarted);
             EventManager.Unsubscribe<ChessFigureMoved>(OnChessFigureMoved);
-            EventManager.Unsubscribe<CellSelected>(OnCellSelected);
-            EventManager.Unsubscribe<CellDeselected>(OnCellDeselected);
             EventManager.Unsubscribe<ChessFigureCaptured>(OnChessFigureCaptured);
             EventManager.Unsubscribe<ChessFigureRemoved>(OnChessFigureRemoved);
             EventManager.Unsubscribe<ChessFigureSummoned>(OnChessFigureAdded);
             EventManager.Unsubscribe<PawnPromoted>(OnPawnPromoted);
-            EventManager.Unsubscribe<CardActivated>(OnCardActivated);
-            EventManager.Unsubscribe<TurnEnded>(OnTurnEnded);
         }
 
         public void Init(GameStarter gameStarter) {
             _gameManager    = gameStarter.GameManager;
             _figureViewPool = gameStarter.FigureViewPool;
+
+            _gameManager.StateChangedEvent += OnStateChanged;
 
             foreach ( var cellView in CellViews ) {
                 cellView.CommonInit(_gameManager, _figureViewPool);
@@ -45,14 +43,75 @@ namespace Chesuto.View {
             
             EventManager.Subscribe<GameStarted>(OnGameStarted);
             EventManager.Subscribe<ChessFigureMoved>(OnChessFigureMoved);
-            EventManager.Subscribe<CellSelected>(OnCellSelected);
-            EventManager.Subscribe<CellDeselected>(OnCellDeselected);
             EventManager.Subscribe<ChessFigureCaptured>(OnChessFigureCaptured);
             EventManager.Subscribe<ChessFigureRemoved>(OnChessFigureRemoved);
             EventManager.Subscribe<ChessFigureSummoned>(OnChessFigureAdded);
             EventManager.Subscribe<PawnPromoted>(OnPawnPromoted);
-            EventManager.Subscribe<CardActivated>(OnCardActivated);
-            EventManager.Subscribe<TurnEnded>(OnTurnEnded);
+        }
+
+        void OnStateChanged(GameManager.State newState) {
+            switch ( newState  ) {
+                case GameManager.State.Idle: {
+                    DeselectAll();
+                    break;
+                }
+                case GameManager.State.CellSelected: {
+                    DeselectAll();
+                    foreach ( var cellView in CellViews ) {
+                        if ( cellView.Coords == _gameManager.SelectedCell.Coords ) {
+                            cellView.SetSelected(true);
+                            if ( cellView.CurFigure != null ) {
+                                var turns = _gameManager.GetAvailableTurns(cellView.CurFigure);
+                                if ( turns != null ) {
+                                    foreach ( var turn in turns ) {
+                                        var turnCellView = GetCell(turn);
+                                        turnCellView.SetHighlighted(true);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    break;
+                }
+                case GameManager.State.SelectingCell_Recruitment: {
+                    var color = _gameManager.Game.CurPlayer.Color; // law of Demeter? Never heard of it >_>
+                    var yMin  = (color == ChessColor.White) ? 0 : 4;
+                    var yMax  = (color == ChessColor.White) ? 3 : 7;
+                    for ( var y = yMin; y <= yMax; ++y ) {
+                        for ( var x = 0; x < 8; ++x ) {
+                            var cellView = GetCell(new ChessCoords(x, y));
+                            if ( cellView.IsFree ) {
+                                cellView.SetHighlighted(true);
+                            }
+                        }
+                    }
+                    break;
+                }
+                case GameManager.State.SelectingPawn_ClaymoreOfRush: {
+                    var color = _gameManager.Game.CurPlayer.Color.Opposite(); // and again?!
+                    foreach ( var cellView in CellViews ) {
+                        if ( !cellView.IsFree && (cellView.CurFigure.Type == FigureType.Pawn) &&
+                             (cellView.CurFigure.Color == color) ) {
+                            cellView.SetHighlighted(true);
+                        }
+                    }
+                    break;
+                }
+                case GameManager.State.PromotingPawn: {
+                    DeselectAll();
+                    break;
+                }
+                default: {
+                    Debug.LogErrorFormat("Unsupported state '{0}'", newState.ToString());
+                    break;
+                }
+            }
+        }
+
+        void DeselectAll() {
+            foreach ( var cellView in CellViews ) {
+                cellView.SetSelected(false);
+            }
         }
 
         void MoveFigure(ChessCoords start, ChessCoords end) {
@@ -112,74 +171,12 @@ namespace Chesuto.View {
             figureCellView.SetFigure(_figureViewPool.Get(figureView => figureView.Init(ev.Figure)));
         }
 
-        void OnCellSelected(CellSelected ev) {
-            var cellView = GetCell(ev.CellCoords);
-            if ( cellView ) {
-                cellView.SetSelected(true);
-                if ( cellView.CurFigure != null ) {
-                    var turns = _gameManager.GetAvailableTurns(cellView.CurFigure);
-                    if ( turns != null ) {
-                        foreach ( var turn in turns ) {
-                            var turnCellView = GetCell(turn);
-                            turnCellView.SetHighlighted(true);
-                        }
-                    } 
-                }
-            }
-        }
-
-        void OnCellDeselected(CellDeselected ev) {
-            foreach ( var cellView in CellViews ) {
-                cellView.SetHighlighted(false);
-            }
-            
-            var deselectedCellView = GetCell(ev.CellCoords);
-            if ( deselectedCellView ) {
-                deselectedCellView.SetSelected(false);
-            }
-        }
-
         void OnPawnPromoted(PawnPromoted ev) {
             var cellView = GetCell(ev.Coords);
             if ( (cellView == null) || cellView.IsFree ) {
                 return;
             }
             cellView.SetFigure(_figureViewPool.Get(figureView => figureView.Init(ev.NewFigure)));
-        }
-
-        void OnCardActivated(CardActivated ev) {
-            switch ( ev.Card.Type ) {
-                case CardType.Recruitment: {
-                    var color = _gameManager.Game.CurPlayer.Color; // law of Demeter? Never heard of it >_>
-                    var yMin  = (color == ChessColor.White) ? 0 : 4;
-                    var yMax  = (color == ChessColor.White) ? 3 : 7;
-                    for ( var y = yMin; y <= yMax; ++y ) {
-                        for ( var x = 0; x < 8; ++x ) {
-                            var cellView = GetCell(new ChessCoords(x, y));
-                            if ( cellView.IsFree ) {
-                                cellView.SetHighlighted(true);
-                            }
-                        }
-                    }
-                    break;
-                }
-                case CardType.ClaymoreOfRush: {
-                    var color = _gameManager.Game.CurPlayer.Color.Opposite(); // and again?!
-                    foreach ( var cellView in CellViews ) {
-                        if ( !cellView.IsFree && (cellView.CurFigure.Type == FigureType.Pawn) &&
-                             (cellView.CurFigure.Color == color) ) {
-                            cellView.SetHighlighted(true);
-                        } 
-                    }
-                    break;
-                }
-            }
-        }
-
-        void OnTurnEnded(TurnEnded ev) {
-            foreach ( var cellView in CellViews ) {
-                cellView.SetHighlighted(false);
-            }
         }
 
         CellView GetCell(ChessCoords coords) {

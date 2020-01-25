@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
+using Chesuto.Chess;
 using Chesuto.Events;
 using Chesuto.Manager;
 using Chesuto.Starter;
@@ -46,17 +47,21 @@ namespace Chesuto.View.UI {
         }
 
         void OnCheck(ChessCheck ev) {
-            MessageText.text = CheckText;
-            SkipButton.enabled = true;
-            ButtonRoot.SetActive(false);
-            Show();
+            if ( IsHumanPlayer(ev.PlayerColor) ) {
+                MessageText.text = CheckText;
+                SkipButton.enabled = true;
+                ButtonRoot.SetActive(false);
+                Show();
+            }
         }
 
         void OnCheckmate(ChessCheckmate ev) {
-            MessageText.text = CheckmateText;
-            SkipButton.enabled = true;
-            ButtonRoot.SetActive(false);
-            Show();
+            if ( IsHumanPlayer(ev.PlayerColor) ) {
+                MessageText.text = CheckmateText;
+                SkipButton.enabled = true;
+                ButtonRoot.SetActive(false);
+                Show();
+            }
         }
 
         void OnGameEnded(GameEnded ev) {
@@ -64,6 +69,10 @@ namespace Chesuto.View.UI {
             SkipButton.enabled = false;
             ButtonRoot.SetActive(true);
             Show();
+        }
+
+        bool IsHumanPlayer(ChessColor playerColor) {
+            return (_gameManager.Game.GetPlayer(playerColor) is HumanPlayer);
         }
         
         void Show() {

@@ -1,32 +1,45 @@
 ﻿using UnityEngine;
 
+using System;
 using System.Collections.Generic;
 
 using Chesuto.Cards;
 using Chesuto.Chess;
-using Chesuto.Chess.Figures;
 using Chesuto.Events;
 
 namespace Chesuto.Manager {
     public sealed class GameManager {
-        enum State {
+        public enum State {
             Idle                         = 0,
             CellSelected                 = 1,
             SelectingCell_Recruitment    = 2,
             SelectingPawn_ClaymoreOfRush = 3,
+            PromotingPawn                = 4,
         }
         
         public readonly Game Game;
-        
-        State _curState;
-        Cell  _selectedCell;
 
+        public event Action<State> StateChangedEvent;
+
+        State _curState;
+
+        State CurState {
+            get => _curState;
+            set {
+                _curState = value;
+
+                StateChangedEvent?.Invoke(_curState);
+            }
+        }
+
+        public Cell SelectedCell { get; private set; }
+        
         public Board Board => Game.Board;
 
         public GameManager() {
             Game = new Game();
             
-            _curState = State.Idle;
+            CurState = State.Idle;
             EventManager.Subscribe<GameEnded>(OnGameEnded);
         }
 
@@ -42,7 +55,7 @@ namespace Chesuto.Manager {
 
         public void SkipTurn() {
             if ( Game.SkipTurn() ) {
-                if ( _curState == State.CellSelected ) {
+                if ( CurState == State.CellSelected ) {
                     TryDeselectCell();
                 }
             }
@@ -51,7 +64,7 @@ namespace Chesuto.Manager {
         public void TryEndTurn(bool useAction = false) {
             if ( Game.TryEndTurn(useAction) ) {
                 TryDeselectCell();
-                _curState = State.Idle;
+                CurState = State.Idle;
             }
         }
 
@@ -67,30 +80,53 @@ namespace Chesuto.Manager {
             return Game.CanActivateCard(cardType);
         }
 
+        public void ResetState() {
+            switch ( CurState ) {
+                case State.Idle: {
+                    break;
+                }
+                case State.CellSelected:
+                case State.SelectingCell_Recruitment:
+                case State.SelectingPawn_ClaymoreOfRush: {
+                    TryDeselectCell();
+                    CurState = State.Idle;
+                    break;
+                }
+                default: {
+                    Debug.LogErrorFormat("Unsupported state '{0}'", CurState.ToString());
+                    break;
+                }
+            }
+        }
+
         public void TryActivateCard(CardType cardType) {
+            if ( (CurState != State.Idle) && (CurState != State.CellSelected) ) {
+                TryDeselectCell();
+                CurState = State.Idle;
+            }
             switch ( cardType ) {
                 case CardType.Recruitment: {
                     TryDeselectCell();
-                    if ( Game.TryActivateCard(cardType) ) {
-                        _curState = State.SelectingCell_Recruitment;
+                    if ( Game.CanActivateCard(cardType) ) {
+                        CurState = State.SelectingCell_Recruitment;
                     }
                     break;
                 }
                 case CardType.StrengthenedRise: {
                     if ( Game.TryActivateCard(cardType) ) {
                         TryDeselectCell();
-                        _curState = State.Idle;
+                        CurState = State.Idle;
                         Game.TryEndTurn();
                     }
                     break;
                 }
                 case CardType.ClaymoreOfRush: {
-                    if ( Game.TryActivateCard(cardType) ) {
+                    if ( Game.CanActivateCard(cardType) ) {
                         TryDeselectCell();
                         if ( Game.Board.HasFigure(FigureType.Pawn, Game.CurPlayer.Color.Opposite()) ) {
-                            _curState = State.SelectingPawn_ClaymoreOfRush;
-                        } else {
-                            _curState = State.Idle;
+                            CurState = State.SelectingPawn_ClaymoreOfRush;
+                        } else if ( Game.TryActivateCard(cardType) ) {
+                            CurState = State.Idle;
                             Game.TryEndTurn();
                         }
                     }
@@ -109,13 +145,13 @@ namespace Chesuto.Manager {
                 Debug.LogErrorFormat("Can't get cell {0}", coords);
                 return;
             }
-            switch ( _curState ) {
+            switch ( CurState ) {
                 case State.Idle: {
                     TrySelectCell(cell);
                     break;
                 }
                 case State.CellSelected: {
-                    if ( (_selectedCell == cell) || Game.TryMove(_selectedCell.Coords, coords) ) {
+                    if ( (SelectedCell == cell) || Game.TryMove(SelectedCell.Coords, coords) ) {
                         TryDeselectCell();
                     } else {
                         TryDeselectCell();
@@ -128,8 +164,9 @@ namespace Chesuto.Manager {
                     var yMin    = isWhite ? 0 : 4;
                     var yMax    = isWhite ? 3 : 7;
                     if ( cell.IsEmpty && (cell.Coords.Y >= yMin) && (cell.Coords.Y <= yMax) &&
+                         Game.TryActivateCard(CardType.Recruitment) &&
                          Game.Board.TrySummonFigure(coords, FigureType.Pawn, Game.CurPlayer.Color) ) {
-                        _curState = State.Idle;
+                        CurState = State.Idle;
                         Game.TryEndTurn();
                     }
                     break;
@@ -137,38 +174,38 @@ namespace Chesuto.Manager {
                 case State.SelectingPawn_ClaymoreOfRush: {
                     var color = Game.CurPlayer.Color;
                     if ( !cell.IsEmpty && (cell.CurFigure.Type == FigureType.Pawn) &&
-                         (cell.CurFigure.Color == color.Opposite()) ) {
+                         (cell.CurFigure.Color == color.Opposite()) && Game.TryActivateCard(CardType.ClaymoreOfRush) ) {
                         Game.Board.RemoveFigure(coords);
                         Game.TryEndTurn();
-                        _curState = State.Idle;
+                        CurState = State.Idle;
                     }
                     break;
                 }
                 default: {
-                    Debug.LogErrorFormat("Unsupported state '{0}'", _curState.ToString());
+                    Debug.LogErrorFormat("Unsupported state '{0}'", CurState.ToString());
                     break;
                 }
             }
         }
 
         void TrySelectCell(Cell cell) {
-            if ( _selectedCell != null ) {
-                Debug.LogErrorFormat("Can't select cell {0}: cell {1} is already selected", _selectedCell.Coords,
-                    _selectedCell.Coords);
+            if ( SelectedCell != null ) {
+                Debug.LogErrorFormat("Can't select cell {0}: cell {1} is already selected", SelectedCell.Coords,
+                    SelectedCell.Coords);
                 return;
             }
             if ( !cell.IsEmpty && (cell.CurFigure.Color == Game.CurPlayer.Color) ) {
-                _selectedCell = cell;
-                _curState     = State.CellSelected;
+                SelectedCell = cell;
+                CurState     = State.CellSelected;
                 EventManager.Fire(new CellSelected(cell.Coords));
             }
         }
 
         void TryDeselectCell() {
-            if ( _selectedCell != null ) {
-                var deselectedCellCoords = _selectedCell.Coords;
-                _selectedCell = null;
-                _curState     = State.Idle;
+            if ( SelectedCell != null ) {
+                var deselectedCellCoords = SelectedCell.Coords;
+                SelectedCell = null;
+                CurState     = State.Idle;
                 EventManager.Fire(new CellDeselected(deselectedCellCoords));
             }
         }
