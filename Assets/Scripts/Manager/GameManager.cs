@@ -44,8 +44,8 @@ namespace Chesuto.Manager {
             EventManager.Subscribe<PawnReadyToPromote>(OnPawnReadyToPromote);
         }
 
-        public void StartGame(DeckPreset deckPreset) {
-            Game.Start(deckPreset);
+        public void StartGame(Deck deck) {
+            Game.Start(deck);
         }
 
         public void Deinit() {

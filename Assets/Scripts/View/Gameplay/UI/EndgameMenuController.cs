@@ -1,12 +1,15 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
+using Chesuto.Cards;
 using Chesuto.Chess;
 using Chesuto.Events;
 using Chesuto.Manager;
 using Chesuto.Starter;
 
 using TMPro;
+
+using UnityEngine.SceneManagement;
 
 namespace Chesuto.Gameplay.View.UI {
     public sealed class EndgameMenuController : GameComponent {
@@ -37,8 +40,7 @@ namespace Chesuto.Gameplay.View.UI {
             
             SkipButton.onClick.AddListener(Hide);
             Button.onClick.AddListener(() => {
-                _gameManager.StartGame(gameStarter.DeckPreset.DeckPreset);
-                Hide();
+                SceneManager.LoadScene("MainMenu");
             });
 
             EventManager.Subscribe<ChessCheck>(OnCheck);

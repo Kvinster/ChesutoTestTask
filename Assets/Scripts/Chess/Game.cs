@@ -40,11 +40,11 @@ namespace Chesuto.Chess {
             Board.Reset();
         }
 
-        public void Start(DeckPreset deckPreset) {
+        public void Start(Deck deck) {
             Board.Reset();
             
-            _whitePlayer = new HumanPlayer(ChessColor.White, Deck.FromPreset(deckPreset), this);
-            _blackPlayer = new RandomAIPlayer(ChessColor.Black, Deck.FromPreset(deckPreset), this);
+            _whitePlayer = new HumanPlayer(ChessColor.White, Deck.Clone(deck), this);
+            _blackPlayer = new RandomAIPlayer(ChessColor.Black, Deck.Clone(deck), this);
 
             IsActive  = true;
             NextTurn();

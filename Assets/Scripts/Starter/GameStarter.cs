@@ -3,6 +3,7 @@
 using System.Collections.Generic;
 
 using Chesuto.Cards;
+using Chesuto.Controller;
 using Chesuto.Manager;
 using Chesuto.Gameplay.View;
 
@@ -30,7 +31,9 @@ namespace Chesuto.Starter {
                 gameComp.Init(this);
             }
 
-            GameManager.StartGame(DeckPreset.DeckPreset);
+            GameManager.StartGame(GameController.Instance.Deck == null
+                ? Deck.FromPreset(DeckPreset.DeckPreset)
+                : GameController.Instance.Deck);
         }
     }
 }
