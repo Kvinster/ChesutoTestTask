@@ -17,7 +17,7 @@ namespace Chesuto.Cards {
             }
         }
 
-        const int DeckSize = 30;
+        const int DeckSize = 40;
 
         public List<CardPack> CardPacks;
 

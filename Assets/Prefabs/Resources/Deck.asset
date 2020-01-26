@@ -19,3 +19,5 @@ MonoBehaviour:
     CardsAmount: 10
   - CardType: 2
     CardsAmount: 10
+  - CardType: 3
+    CardsAmount: 10
