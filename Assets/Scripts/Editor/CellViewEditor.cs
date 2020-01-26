@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEditor;
 
-using Chesuto.View;
+using Chesuto.Gameplay.View;
 
 namespace Chesuto.Editor {
     [CustomEditor(typeof(CellView))]

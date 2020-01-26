@@ -9,7 +9,7 @@ using Chesuto.Events;
 using Chesuto.Manager;
 using Chesuto.Starter;
 
-namespace Chesuto.View {
+namespace Chesuto.Gameplay.View {
     [RequireComponent(typeof(RectTransform))]
     public sealed class BoardView : MonoBehaviour {
         public GameObject CellPrefab;

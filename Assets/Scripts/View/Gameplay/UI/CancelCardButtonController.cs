@@ -4,7 +4,7 @@ using UnityEngine.UI;
 using Chesuto.Manager;
 using Chesuto.Starter;
 
-namespace Chesuto.View.UI {
+namespace Chesuto.Gameplay.View.UI {
     public sealed class CancelCardButtonController : GameComponent {
         public GameObject ButtonRoot;
         public Button     Button;

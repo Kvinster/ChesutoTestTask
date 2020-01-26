@@ -6,7 +6,7 @@ using Chesuto.Events;
 using Chesuto.Manager;
 using Chesuto.Starter;
 
-namespace Chesuto.View.UI {
+namespace Chesuto.Gameplay.View.UI {
     public sealed class EndTurnButtonController : GameComponent {
         public GameObject ButtonRoot;
         public Button     Button;

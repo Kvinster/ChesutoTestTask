@@ -1,12 +1,10 @@
-﻿using System;
-
-using UnityEngine;
+﻿using UnityEngine;
 
 using System.Collections.Generic;
 
 using Chesuto.Cards;
 using Chesuto.Manager;
-using Chesuto.View;
+using Chesuto.Gameplay.View;
 
 namespace Chesuto.Starter {
     public sealed class GameStarter : MonoBehaviour {

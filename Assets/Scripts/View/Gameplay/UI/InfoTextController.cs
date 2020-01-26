@@ -9,7 +9,7 @@ using Chesuto.Starter;
 
 using TMPro;
 
-namespace Chesuto.View.UI {
+namespace Chesuto.Gameplay.View.UI {
     public sealed class InfoTextController : GameComponent {
         const string CurTurnTextTemplate   = "Current Turn: {0}";
         const string TurnCountTextTemplate = "Turn count: {0}";

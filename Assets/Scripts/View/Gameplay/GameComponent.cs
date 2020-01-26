@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 using Chesuto.Starter;
 
-namespace Chesuto.View {
+namespace Chesuto.Gameplay.View {
     public abstract class GameComponent : MonoBehaviour {
         public static readonly HashSet<GameComponent> Instances = new HashSet<GameComponent>();
         

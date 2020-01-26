@@ -8,7 +8,7 @@ using Chesuto.Events;
 using Chesuto.Manager;
 using Chesuto.Starter;
 
-namespace Chesuto.View.UI {
+namespace Chesuto.Gameplay.View.UI {
     public sealed class HandView : GameComponent {
         public GameObject     CardsRoot;
         public CanvasGroup    CanvasGroup;

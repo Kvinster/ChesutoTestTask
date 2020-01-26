@@ -3,7 +3,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Chesuto.View {
+namespace Chesuto.Gameplay.View {
     public sealed class FigureViewPool : MonoBehaviour {
         public GameObject       FigureViewPrefab;
         public List<FigureView> FigureViews      = new List<FigureView>();

@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using Chesuto.Chess;
 using Chesuto.Manager;
 
-namespace Chesuto.View {
+namespace Chesuto.Gameplay.View {
     public sealed class CellView : MonoBehaviour {
         public Image Background;
         

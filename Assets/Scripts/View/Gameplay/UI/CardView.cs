@@ -7,7 +7,7 @@ using Chesuto.Manager;
 
 using TMPro;
 
-namespace Chesuto.View.UI {
+namespace Chesuto.Gameplay.View.UI {
     public sealed class CardView : MonoBehaviour {
         public Button   Button;
         public TMP_Text CardNameText;

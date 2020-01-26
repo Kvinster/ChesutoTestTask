@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 using Chesuto.Chess;
 
-namespace Chesuto.View {
+namespace Chesuto.Gameplay.View {
     [CreateAssetMenu(fileName = "SpriteSetup", menuName = "Create SpriteSetup")]
     public sealed class SpriteSetup : ScriptableObject {
         [Serializable]

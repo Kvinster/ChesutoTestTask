@@ -8,7 +8,7 @@ using Chesuto.Starter;
 
 using TMPro;
 
-namespace Chesuto.View.UI {
+namespace Chesuto.Gameplay.View.UI {
     public sealed class EndgameMenuController : GameComponent {
         const string CheckText     = "Check!";
         const string CheckmateText = "Checkmate!";

@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 using Chesuto.Chess;
 
-namespace Chesuto.View {
+namespace Chesuto.Gameplay.View {
     [RequireComponent(typeof(Image))]
     public sealed class FigureView : MonoBehaviour {
         SpriteSetup _spriteSetup;
