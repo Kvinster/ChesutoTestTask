@@ -10,6 +10,10 @@ My entry for coding challenge for Chesuto project.
 - Random AI
 
 ## Changelog
+### v. 0.0.0.2
+- Added main menu where you can build the deck for the next game
+- Implemented "Cruel Crusade" card
+- "Strengthened Rise" cards no longer stack
 ### v. 0.0.0.1
 - UI fixes:
   - Added "Cancel" button that allows cancel activation of cards like "Recruitment" or "Claymore of Rush"
