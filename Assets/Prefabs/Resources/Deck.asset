@@ -9,15 +9,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ca73ad2492094e7abb0e90b7e0eee5d8, type: 3}
+  m_Script: {fileID: 11500000, guid: 8e7197641fab416e968001a1b3147e12, type: 3}
   m_Name: Deck
   m_EditorClassIdentifier: 
-  CardPacks:
-  - CardType: 0
-    CardsAmount: 10
-  - CardType: 1
-    CardsAmount: 10
-  - CardType: 2
-    CardsAmount: 10
-  - CardType: 3
-    CardsAmount: 10
+  DeckPreset:
+    CardPacks:
+    - CardType: 0
+      CardsAmount: 10
+    - CardType: 1
+      CardsAmount: 10
+    - CardType: 2
+      CardsAmount: 10
+    - CardType: 3
+      CardsAmount: 10

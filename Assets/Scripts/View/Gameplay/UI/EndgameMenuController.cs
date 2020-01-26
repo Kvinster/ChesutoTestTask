@@ -37,7 +37,7 @@ namespace Chesuto.Gameplay.View.UI {
             
             SkipButton.onClick.AddListener(Hide);
             Button.onClick.AddListener(() => {
-                _gameManager.StartGame(gameStarter.DeckPreset);
+                _gameManager.StartGame(gameStarter.DeckPreset.DeckPreset);
                 Hide();
             });
 

@@ -1,34 +1,9 @@
-﻿using UnityEngine;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace Chesuto.Cards {
-    [CreateAssetMenu(menuName = "Create DeckPreset", fileName = "Deck")]
-    public sealed class DeckPreset : ScriptableObject {
-        [Serializable]
-        public sealed class CardPack {
-            public CardType CardType;
-            public int      CardsAmount;
-
-            public CardPack(CardType cardType, int cardsAmount) {
-                CardType    = cardType;
-                CardsAmount = cardsAmount;
-            }
-        }
-
-        const int DeckSize = 40;
-
-        public List<CardPack> CardPacks;
-
-        void OnValidate() {
-            var cardsCount = 0;
-            foreach ( var cardPack in CardPacks ) {
-                cardsCount += cardPack.CardsAmount;
-            }
-            if ( cardsCount != DeckSize ) {
-                Debug.LogErrorFormat(this, "Invalid deck size '{0}'", cardsCount);
-            }
-        }
+    [Serializable]
+    public sealed class DeckPreset {
+        public List<CardPack> CardPacks = new List<CardPack>();
     }
 }

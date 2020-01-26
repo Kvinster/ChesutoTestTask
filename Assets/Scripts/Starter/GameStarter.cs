@@ -8,10 +8,10 @@ using Chesuto.Gameplay.View;
 
 namespace Chesuto.Starter {
     public sealed class GameStarter : MonoBehaviour {
-        public SpriteSetup    SpriteSetup;
-        public BoardView      BoardView;
-        public FigureViewPool FigureViewPool;
-        public DeckPreset     DeckPreset;
+        public SpriteSetup            SpriteSetup;
+        public BoardView              BoardView;
+        public FigureViewPool         FigureViewPool;
+        public DeckPresetSerializable DeckPreset;
 
         public GameManager GameManager { get; private set; }
 
@@ -30,7 +30,7 @@ namespace Chesuto.Starter {
                 gameComp.Init(this);
             }
 
-            GameManager.StartGame(DeckPreset);
+            GameManager.StartGame(DeckPreset.DeckPreset);
         }
     }
 }
