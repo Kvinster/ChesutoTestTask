@@ -14,12 +14,6 @@ namespace Chesuto.Cards {
         
         public override PlayerEffectType Type => PlayerEffectType.CruelCrusade;
 
-        public override void FilterAvailableTurns(Dictionary<Figure, List<ChessCoords>> availableTurns) {
-            if ( _usedEffect ) {
-                availableTurns.Clear();
-            }
-        }
-
         protected override void EndEffect() {
             Player.SetHandSize(Hand.MaxHandSize);
             base.EndEffect();
