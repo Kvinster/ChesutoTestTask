@@ -8,14 +8,16 @@ using Chesuto.Events;
 
 namespace Chesuto.Cards {
     public sealed class Hand : IEnumerable<GenericCard> {
-        const int MaxHandSize = 10;
+        public const int MaxHandSize = 10;
 
-        readonly List<GenericCard> _cards = new List<GenericCard>();
+        readonly List<GenericCard> _cards = new List<GenericCard>(MaxHandSize);
+
+        int _maxHandSize = MaxHandSize;
 
         public int HandSize => _cards.Count;
 
         public bool IsEmpty => (HandSize == 0);
-        public bool IsFull  => (HandSize >= MaxHandSize);
+        public bool IsFull  => (HandSize >= _maxHandSize);
 
         public GenericCard this[int i] {
             get {
@@ -28,7 +30,7 @@ namespace Chesuto.Cards {
         }
 
         public bool TryAddCard(GenericCard card) {
-            if ( _cards.Count == MaxHandSize ) {
+            if ( _cards.Count >= _maxHandSize ) {
                 return false;
             }
             _cards.Add(card);
@@ -78,6 +80,16 @@ namespace Chesuto.Cards {
             }
             playerEffect = null;
             return false;
+        }
+
+        public void SetMaxHandSize(int maxHandSize) {
+            if ( (_maxHandSize > maxHandSize) && (HandSize > maxHandSize) ) {
+                for ( var i = _cards.Count - 1; i >= maxHandSize; --i ) {
+                    _cards.RemoveAt(i);
+                }
+                EventManager.Fire(new HandChanged(this));
+            }
+            _maxHandSize = maxHandSize;
         }
 
         IEnumerator<GenericCard> IEnumerable<GenericCard>.GetEnumerator() {

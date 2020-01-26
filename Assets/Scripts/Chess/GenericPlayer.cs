@@ -73,6 +73,10 @@ namespace Chesuto.Chess {
             EventManager.Fire(new PlayerEffectEnded(this, effect));
         }
 
+        public void SetHandSize(int handSize) {
+            Hand.SetMaxHandSize(handSize);
+        }
+
         public void FilterAvailableTurns(Dictionary<Figure, List<ChessCoords>> availableTurns) {
             foreach ( var effect in Effects ) {
                 effect.FilterAvailableTurns(availableTurns);

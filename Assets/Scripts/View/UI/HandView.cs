@@ -32,6 +32,7 @@ namespace Chesuto.View.UI {
             EventManager.Unsubscribe<TurnStarted>(OnTurnStarted);
             EventManager.Unsubscribe<GameStarted>(OnGameStarted);
             EventManager.Unsubscribe<GameEnded>(OnGameEnded);
+            EventManager.Unsubscribe<GameActionsLeftChanged>(OnGameActionsLeftChanged);
         }
 
         public override void Init(GameStarter gameStarter) {
@@ -47,6 +48,7 @@ namespace Chesuto.View.UI {
             EventManager.Subscribe<TurnStarted>(OnTurnStarted);
             EventManager.Subscribe<GameStarted>(OnGameStarted);
             EventManager.Subscribe<GameEnded>(OnGameEnded);
+            EventManager.Subscribe<GameActionsLeftChanged>(OnGameActionsLeftChanged);
         }
 
         void OnHandChanged(HandChanged ev) {
@@ -85,6 +87,25 @@ namespace Chesuto.View.UI {
             CanvasGroup.interactable = (_gameManager.Game.CurPlayer == _player);
         }
 
+        void OnGameEnded(GameEnded ev) {
+            if ( !_isActive ) {
+                return;
+            }
+            
+            _player   = null;
+            _isActive = false;
+
+            CanvasGroup.interactable = false;
+        }
+
+        void OnGameActionsLeftChanged(GameActionsLeftChanged ev) {
+            if ( !_isActive ) {
+                return;
+            }
+
+            UpdateCardViews();
+        }
+
         void UpdateCardViews() {
             CanvasGroup.interactable = (_player.TurnCount > 3) && _gameManager.Game.HasActions;
             int i;
@@ -96,17 +117,6 @@ namespace Chesuto.View.UI {
             for ( ; i < CardViews.Count; ++i ) {
                 CardViews[i].gameObject.SetActive(false);
             }
-        }
-
-        void OnGameEnded(GameEnded ev) {
-            if ( !_isActive ) {
-                return;
-            }
-            
-            _player   = null;
-            _isActive = false;
-
-            CanvasGroup.interactable = false;
         }
     }
 }

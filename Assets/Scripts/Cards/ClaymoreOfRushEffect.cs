@@ -17,7 +17,7 @@ namespace Chesuto.Cards {
         readonly ClaymoreOfRush _parentCard;
         
         State _curState;
-
+        
         Pawn _pawn;
         
         public override PlayerEffectType Type => PlayerEffectType.ClaymoreOfRush;
@@ -58,7 +58,7 @@ namespace Chesuto.Cards {
         }
 
         public override bool CanActivateCard(CardType cardType) {
-            return (_curState != State.WaitingPawnSecondMove);
+            return (cardType != CardType.ClaymoreOfRush) && (_curState != State.WaitingPawnSecondMove);
         }
 
         protected override void EndEffect() {
@@ -88,7 +88,7 @@ namespace Chesuto.Cards {
         }
 
         void OnCardActivated(CardActivated ev) {
-            if ( (Game.CurPlayer == Player) && (ev.Card != _parentCard) ) {
+            if ( (Game.CurPlayer == Player) && (ev.Card != _parentCard) && (_curState != State.WaitingPlayerTurn) ) {
                 if ( _curState == State.WaitingPawnSecondMove ) {
                     if ( !Game.TrySpendActions(1) ) {
                         Debug.LogError("Can't take away additional action");

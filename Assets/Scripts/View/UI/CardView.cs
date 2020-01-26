@@ -20,12 +20,14 @@ namespace Chesuto.View.UI {
 
         void OnEnable() {
             EventManager.Subscribe<CardActivated>(OnCardActivated);
+            EventManager.Subscribe<PlayerEffectEnded>(OnPlayerEffectEnded);
             EventManager.Subscribe<ChessFigureMoved>(OnChessFigureMoved);
             EventManager.Subscribe<GameActionsLeftChanged>(OnGameActionsLeftChanged);
         }
 
         void OnDisable() {
             EventManager.Unsubscribe<CardActivated>(OnCardActivated);
+            EventManager.Unsubscribe<PlayerEffectEnded>(OnPlayerEffectEnded);
             EventManager.Unsubscribe<ChessFigureMoved>(OnChessFigureMoved);
             EventManager.Unsubscribe<GameActionsLeftChanged>(OnGameActionsLeftChanged);
         }
@@ -52,6 +54,10 @@ namespace Chesuto.View.UI {
         }
 
         void OnCardActivated(CardActivated ev) {
+            UpdateButton();
+        }
+
+        void OnPlayerEffectEnded(PlayerEffectEnded ev) {
             UpdateButton();
         }
 

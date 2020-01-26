@@ -87,8 +87,12 @@ namespace Chesuto.Chess {
         }
 
         public bool TryActivateCard(CardType cardType) {
-            --ActionsLeft;
-            return CurPlayer.TryActivateCard(cardType);
+            if ( CurPlayer.TryActivateCard(cardType) ) {
+                --ActionsLeft;
+                Board.UpdateAvailableTurns();
+                return true;
+            }
+            return false;
         }
 
         public bool CanEndTurn() {

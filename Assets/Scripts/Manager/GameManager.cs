@@ -56,14 +56,6 @@ namespace Chesuto.Manager {
             Game.Deinit();
         }
 
-        public void SkipTurn() {
-            if ( Game.SkipTurn() ) {
-                if ( CurState == State.CellSelected ) {
-                    TryDeselectCell();
-                }
-            }
-        }
-
         public void TryEndTurn(bool useAction = false) {
             if ( Game.TryEndTurn(useAction) ) {
                 TryDeselectCell();
@@ -115,7 +107,8 @@ namespace Chesuto.Manager {
                     }
                     break;
                 }
-                case CardType.StrengthenedRise: {
+                case CardType.StrengthenedRise:
+                case CardType.CruelCrusade: {
                     if ( Game.TryActivateCard(cardType) ) {
                         TryDeselectCell();
                         CurState = State.Idle;
